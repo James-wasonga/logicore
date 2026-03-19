@@ -223,7 +223,10 @@
   };
 
   async function loadRules() {
-    const res = await fetch('/api/rules');
+    const BACKEND = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+      ? ''
+      : 'https://logicore-api.onrender.com';
+    const res = await fetch(`${BACKEND}/api/rules`);
     const rules = await res.json();
     const grid = document.getElementById('rulesGrid');
     grid.innerHTML = rules.map(r => {
