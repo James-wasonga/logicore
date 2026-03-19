@@ -1,0 +1,829 @@
+{% extends "base.html" %}
+{% block title %}Student Consultation — LogiCore{% endblock %}
+
+{% block extra_styles %}
+<style>
+  .consult-page {
+    min-height: 100vh;
+    padding: 5rem 2rem 4rem;
+  }
+
+  .consult-wrap {
+    max-width: 820px;
+    margin: 0 auto;
+  }
+
+  .consult-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-bar-wrap {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .progress-steps {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+  }
+
+  .progress-steps::before {
+    content: '';
+    position: absolute;
+    left: 0; right: 0;
+    top: 50%;
+    height: 2px;
+    background: var(--border);
+    z-index: 0;
+    transform: translateY(-50%);
+  }
+
+  .progress-fill {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent-blue), var(--accent-violet));
+    z-index: 1;
+    transform: translateY(-50%);
+    transition: width 0.5s ease;
+  }
+
+  .step-dot {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    z-index: 2;
+    position: relative;
+    transition: all 0.3s;
+    font-family: var(--font-mono);
+  }
+
+  .step-dot.active {
+    border-color: var(--accent-blue);
+    background: rgba(79,195,247,0.15);
+    color: var(--accent-blue);
+    box-shadow: 0 0 15px rgba(79,195,247,0.3);
+  }
+
+  .step-dot.done {
+    border-color: var(--accent-emerald);
+    background: rgba(52,211,153,0.15);
+    color: var(--accent-emerald);
+  }
+
+  .step-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.6rem;
+  }
+
+  .step-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    text-align: center;
+    width: 36px;
+    letter-spacing: 0.02em;
+  }
+
+  .step-label.active { color: var(--accent-blue); }
+  .step-label.done { color: var(--accent-emerald); }
+
+  /* ── FORM STEPS ── */
+  .form-step {
+    display: none;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  .form-step.active {
+    display: block;
+  }
+
+  .step-box {
+    background: var(--gradient-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .step-box-title {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .step-box-desc {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+  }
+
+  /* ── FORM CONTROLS ── */
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 0.6rem;
+    letter-spacing: 0.02em;
+  }
+
+  .form-label i { color: var(--accent-blue); font-size: 0.85rem; }
+
+  .form-input, .form-select {
+    width: 100%;
+    padding: 0.85rem 1.1rem;
+    background: rgba(255,255,255,0.03);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.25s, box-shadow 0.25s;
+    appearance: none;
+  }
+
+  .form-input:focus, .form-select:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(79,195,247,0.12);
+    background: rgba(79,195,247,0.03);
+  }
+
+  .form-select option { background: #0D1526; color: var(--text-primary); }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .range-wrapper {
+    position: relative;
+  }
+
+  .range-value {
+    position: absolute;
+    right: 0; top: -1.6rem;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--accent-blue);
+  }
+
+  input[type="range"] {
+    width: 100%;
+    -webkit-appearance: none;
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    outline: none;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-violet));
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(79,195,247,0.4);
+  }
+
+  /* ── SKILL CHIPS ── */
+  .skill-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 0.6rem;
+  }
+
+  .skill-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.6rem 0.9rem;
+    background: rgba(255,255,255,0.02);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    transition: all 0.2s;
+    user-select: none;
+  }
+
+  .skill-chip:hover {
+    border-color: rgba(79,195,247,0.3);
+    color: var(--text-primary);
+    background: rgba(79,195,247,0.04);
+  }
+
+  .skill-chip.selected {
+    border-color: var(--accent-blue);
+    background: rgba(79,195,247,0.1);
+    color: var(--accent-blue);
+  }
+
+  .skill-chip input {
+    display: none;
+  }
+
+  .skill-check {
+    width: 16px; height: 16px;
+    border-radius: 4px;
+    border: 1.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+    font-size: 10px;
+  }
+
+  .skill-chip.selected .skill-check {
+    background: var(--accent-blue);
+    border-color: var(--accent-blue);
+    color: white;
+  }
+
+  /* ── CAREER OPTIONS ── */
+  .career-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.6rem;
+  }
+
+  .career-option {
+    padding: 0.8rem 1rem;
+    background: rgba(255,255,255,0.02);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    transition: all 0.2s;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .career-option input { display: none; }
+
+  .career-option:hover {
+    border-color: rgba(167,139,250,0.3);
+    color: var(--text-primary);
+  }
+
+  .career-option.selected {
+    border-color: var(--accent-violet);
+    background: rgba(167,139,250,0.1);
+    color: var(--accent-violet);
+  }
+
+  .career-radio {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    flex-shrink: 0;
+    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .career-option.selected .career-radio {
+    background: var(--accent-violet);
+    border-color: var(--accent-violet);
+  }
+  .career-option.selected .career-radio::after {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: white;
+  }
+
+  /* ── PRIORITY CHIPS ── */
+  .priority-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.6rem;
+  }
+
+  .priority-chip {
+    padding: 0.9rem 1rem;
+    background: rgba(255,255,255,0.02);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    transition: all 0.2s;
+    user-select: none;
+    text-align: center;
+  }
+
+  .priority-chip input { display: none; }
+
+  .priority-chip.selected {
+    border-color: var(--accent-amber);
+    background: rgba(251,191,36,0.1);
+    color: var(--accent-amber);
+  }
+
+  /* ── NAVIGATION BUTTONS ── */
+  .form-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .step-counter {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  /* ── LOADING ── */
+  .loading-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(5,10,20,0.9);
+    z-index: 9999;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+  }
+
+  .loading-overlay.show {
+    display: flex;
+  }
+
+  .loading-spinner {
+    width: 60px; height: 60px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent-blue);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-text {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    text-align: center;
+  }
+
+  .loading-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .loading-step {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .loading-step.active { color: var(--accent-blue); }
+  .loading-step.done { color: var(--accent-emerald); }
+
+  .loading-step-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: pulse 1s ease infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="consult-page">
+  <div class="consult-wrap">
+
+    <div class="consult-header animate-fade-up">
+      <div class="section-label">Expert Consultation</div>
+      <h1 class="section-title">Find Your Ideal Project</h1>
+      <div class="divider" style="margin: 1rem auto;"></div>
+      <p class="section-subtitle" style="margin: 0 auto; text-align:center; max-width:500px;">
+        Answer 5 quick sections. LogiCore will analyze your profile using expert reasoning and match you with your best project topics.
+      </p>
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="progress-bar-wrap animate-fade-up delay-1">
+      <div class="progress-steps">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+        <div class="step-dot active" id="dot-1">1</div>
+        <div class="step-dot" id="dot-2">2</div>
+        <div class="step-dot" id="dot-3">3</div>
+        <div class="step-dot" id="dot-4">4</div>
+        <div class="step-dot" id="dot-5">5</div>
+      </div>
+      <div class="step-labels">
+        <div class="step-label active" id="lbl-1">Profile</div>
+        <div class="step-label" id="lbl-2">Skills</div>
+        <div class="step-label" id="lbl-3">Career</div>
+        <div class="step-label" id="lbl-4">Constraints</div>
+        <div class="step-label" id="lbl-5">Priorities</div>
+      </div>
+    </div>
+
+    <form id="consultForm">
+
+      <!-- STEP 1: PROFILE -->
+      <div class="form-step active" id="step-1">
+        <div class="step-box animate-fade-up">
+          <div class="step-box-title">Your Academic Profile</div>
+          <p class="step-box-desc">Tell us about yourself so we can tailor recommendations to your academic standing.</p>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label"><i class="fas fa-user"></i> Full Name</label>
+              <input type="text" class="form-input" id="name" placeholder="e.g. James Wasonga" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label"><i class="fas fa-id-card"></i> Admission Number</label>
+              <input type="text" class="form-input" id="admission" placeholder="e.g. CCS/00057/022" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label"><i class="fas fa-graduation-cap"></i> Current GPA (0.0 – 4.0)</label>
+              <div class="range-wrapper">
+                <span class="range-value" id="gpaDisplay">3.0</span>
+                <input type="range" id="gpa" min="0" max="4.0" step="0.1" value="3.0"
+                  oninput="document.getElementById('gpaDisplay').textContent = (+this.value).toFixed(1)" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label"><i class="fas fa-users"></i> Group Size</label>
+              <select class="form-select" id="groupSize">
+                <option value="1">Solo (1 student)</option>
+                <option value="2">Pair (2 students)</option>
+                <option value="3" selected>Group of 3</option>
+                <option value="4">Group of 4</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-clock"></i> Prior Project / Coding Experience</label>
+            <select class="form-select" id="experienceMonths">
+              <option value="0">No prior experience</option>
+              <option value="3" selected>Less than 6 months</option>
+              <option value="6">6 – 12 months</option>
+              <option value="18">1 – 2 years</option>
+              <option value="36">2+ years</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-nav">
+          <span class="step-counter">Step 1 of 5</span>
+          <button type="button" class="btn btn-primary" onclick="nextStep(1)">
+            Next <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 2: SKILLS -->
+      <div class="form-step" id="step-2">
+        <div class="step-box animate-fade-up">
+          <div class="step-box-title">Technical Skills</div>
+          <p class="step-box-desc">Select all technologies and domains you are comfortable working with. Be honest — this helps generate accurate recommendations.</p>
+
+          <div class="skill-grid" id="skillsGrid">
+            {% for key, label in skills.items() %}
+            <label class="skill-chip" onclick="toggleChip(this)">
+              <input type="checkbox" name="skills" value="{{ key }}" />
+              <div class="skill-check"><i class="fas fa-check" style="display:none; font-size:9px;"></i></div>
+              <span>{{ label }}</span>
+            </label>
+            {% endfor %}
+          </div>
+
+          <div style="margin-top:1.5rem; padding-top:1.5rem; border-top: 1px solid var(--border);">
+            <p class="step-box-desc" style="margin-bottom:1rem;">Rate your Python proficiency (most impactful for AI/ML tracks):</p>
+            <div class="range-wrapper" style="position:relative; padding-right:80px;">
+              <span class="range-value" id="pyDisplay">Intermediate</span>
+              <input type="range" id="pythonLevel" min="1" max="5" step="1" value="3"
+                oninput="updatePyLevel(this.value)" />
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-top:0.4rem;">
+              <span style="font-size:0.7rem; color:var(--text-muted); font-family:var(--font-mono);">Beginner</span>
+              <span style="font-size:0.7rem; color:var(--text-muted); font-family:var(--font-mono);">Expert</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-nav">
+          <button type="button" class="btn btn-ghost" onclick="prevStep(2)">
+            <i class="fas fa-arrow-left"></i> Back
+          </button>
+          <span class="step-counter">Step 2 of 5</span>
+          <button type="button" class="btn btn-primary" onclick="nextStep(2)">
+            Next <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 3: CAREER -->
+      <div class="form-step" id="step-3">
+        <div class="step-box animate-fade-up">
+          <div class="step-box-title">Career Aspiration</div>
+          <p class="step-box-desc">What is your primary career goal after graduation? Select one that best matches your ambitions.</p>
+
+          <div class="career-grid" id="careerGrid">
+            {% for key, label in careers.items() %}
+            <label class="career-option" onclick="selectCareer(this, '{{ key }}')">
+              <input type="radio" name="career" value="{{ key }}" />
+              <div class="career-radio"></div>
+              <span>{{ label }}</span>
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="form-nav">
+          <button type="button" class="btn btn-ghost" onclick="prevStep(3)">
+            <i class="fas fa-arrow-left"></i> Back
+          </button>
+          <span class="step-counter">Step 3 of 5</span>
+          <button type="button" class="btn btn-primary" onclick="nextStep(3)">
+            Next <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 4: CONSTRAINTS -->
+      <div class="form-step" id="step-4">
+        <div class="step-box animate-fade-up">
+          <div class="step-box-title">Time & Constraints</div>
+          <p class="step-box-desc">How many hours per week can you realistically dedicate to your project?</p>
+
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-calendar-week"></i> Hours per week available for project work</label>
+            <div class="range-wrapper" style="position:relative; padding-right:80px;">
+              <span class="range-value" id="hoursDisplay">20 hrs</span>
+              <input type="range" id="weeklyHours" min="5" max="50" step="5" value="20"
+                oninput="document.getElementById('hoursDisplay').textContent = this.value + ' hrs'" />
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-top:0.4rem;">
+              <span style="font-size:0.7rem; color:var(--text-muted); font-family:var(--font-mono);">5 hrs/wk</span>
+              <span style="font-size:0.7rem; color:var(--text-muted); font-family:var(--font-mono);">50 hrs/wk</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-desktop"></i> Available Equipment</label>
+            <select class="form-select" id="equipment">
+              <option value="basic">Basic Laptop / PC</option>
+              <option value="good" selected>Mid-range Laptop / PC with GPU</option>
+              <option value="high">High-end workstation / Cloud access</option>
+              <option value="hardware">Hardware components (Arduino, Raspberry Pi, etc.)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-wifi"></i> Internet Access</label>
+            <select class="form-select" id="internet">
+              <option value="limited">Limited (intermittent, slow)</option>
+              <option value="moderate" selected>Moderate (campus Wi-Fi)</option>
+              <option value="good">Reliable broadband</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-nav">
+          <button type="button" class="btn btn-ghost" onclick="prevStep(4)">
+            <i class="fas fa-arrow-left"></i> Back
+          </button>
+          <span class="step-counter">Step 4 of 5</span>
+          <button type="button" class="btn btn-primary" onclick="nextStep(4)">
+            Next <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 5: PRIORITIES -->
+      <div class="form-step" id="step-5">
+        <div class="step-box animate-fade-up">
+          <div class="step-box-title">Project Priorities</div>
+          <p class="step-box-desc">What matters most to you in your final year project? Select all that apply.</p>
+
+          <div class="priority-grid" id="priorityGrid">
+            {% for key, label in priorities.items() %}
+            <label class="priority-chip" onclick="togglePriority(this)">
+              <input type="checkbox" name="priorities" value="{{ key }}" />
+              <div style="font-size:0.95rem; margin-bottom:0.2rem;">{{ label }}</div>
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="step-box animate-fade-up delay-1" style="background: rgba(79,195,247,0.04); border-color: rgba(79,195,247,0.2);">
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:1rem;">
+            <div style="width:36px;height:36px;background:rgba(79,195,247,0.15);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--accent-blue);">
+              <i class="fas fa-brain"></i>
+            </div>
+            <div>
+              <div style="font-weight:700; color:var(--text-primary);">Ready for Analysis</div>
+              <div style="font-size:0.8rem; color:var(--text-muted);">LogiCore will apply forward chaining inference across all 20+ rules.</div>
+            </div>
+          </div>
+          <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.6;">
+            Upon submission, the inference engine will evaluate your profile, fire all applicable rules, and return your top 6 recommended project topics with full reasoning explanations.
+          </p>
+        </div>
+
+        <div class="form-nav">
+          <button type="button" class="btn btn-ghost" onclick="prevStep(5)">
+            <i class="fas fa-arrow-left"></i> Back
+          </button>
+          <span class="step-counter">Step 5 of 5</span>
+          <button type="button" class="btn btn-primary" id="submitBtn" onclick="submitConsultation()">
+            <i class="fas fa-brain"></i> Run Expert Analysis
+          </button>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<!-- LOADING OVERLAY -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-steps">
+    <div class="loading-step active" id="ls1">
+      <div class="loading-step-dot"></div>
+      Initializing working memory...
+    </div>
+    <div class="loading-step" id="ls2">
+      <div class="loading-step-dot"></div>
+      Running forward chaining inference...
+    </div>
+    <div class="loading-step" id="ls3">
+      <div class="loading-step-dot"></div>
+      Scoring project candidates...
+    </div>
+    <div class="loading-step" id="ls4">
+      <div class="loading-step-dot"></div>
+      Generating explanations...
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  let currentStep = 1;
+  const totalSteps = 5;
+  const pyLevels = ["", "Beginner", "Elementary", "Intermediate", "Advanced", "Expert"];
+
+  function updatePyLevel(v) {
+    document.getElementById('pyDisplay').textContent = pyLevels[parseInt(v)];
+  }
+
+  function updateProgress(step) {
+    const pct = ((step - 1) / (totalSteps - 1)) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+    for (let i = 1; i <= totalSteps; i++) {
+      const dot = document.getElementById('dot-' + i);
+      const lbl = document.getElementById('lbl-' + i);
+      dot.className = 'step-dot';
+      lbl.className = 'step-label';
+      if (i < step) { dot.classList.add('done'); lbl.classList.add('done'); dot.innerHTML = '✓'; }
+      else if (i === step) { dot.classList.add('active'); lbl.classList.add('active'); dot.textContent = i; }
+      else { dot.textContent = i; }
+    }
+  }
+
+  function nextStep(from) {
+    document.getElementById('step-' + from).classList.remove('active');
+    currentStep = from + 1;
+    document.getElementById('step-' + currentStep).classList.add('active');
+    updateProgress(currentStep);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function prevStep(from) {
+    document.getElementById('step-' + from).classList.remove('active');
+    currentStep = from - 1;
+    document.getElementById('step-' + currentStep).classList.add('active');
+    updateProgress(currentStep);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function toggleChip(label) {
+    const cb = label.querySelector('input[type=checkbox]');
+    cb.checked = !cb.checked;
+    label.classList.toggle('selected', cb.checked);
+    const icon = label.querySelector('.fa-check');
+    if (icon) icon.style.display = cb.checked ? 'block' : 'none';
+  }
+
+  function selectCareer(label, key) {
+    document.querySelectorAll('.career-option').forEach(c => c.classList.remove('selected'));
+    label.classList.add('selected');
+    label.querySelector('input').checked = true;
+  }
+
+  function togglePriority(label) {
+    const cb = label.querySelector('input[type=checkbox]');
+    cb.checked = !cb.checked;
+    label.classList.toggle('selected', cb.checked);
+  }
+
+  function getSelectedSkills() {
+    return [...document.querySelectorAll('.skill-chip.selected input')].map(i => i.value);
+  }
+
+  function getSelectedCareer() {
+    const sel = document.querySelector('.career-option.selected input');
+    return sel ? sel.value : '';
+  }
+
+  function getSelectedPriorities() {
+    return [...document.querySelectorAll('.priority-chip.selected input')].map(i => i.value);
+  }
+
+  async function submitConsultation() {
+    const overlay = document.getElementById('loadingOverlay');
+    overlay.classList.add('show');
+
+    // Animate loading steps
+    const steps = ['ls1','ls2','ls3','ls4'];
+    for (let i = 0; i < steps.length; i++) {
+      await new Promise(r => setTimeout(r, 700));
+      document.getElementById(steps[i]).classList.add('done');
+      if (i+1 < steps.length) document.getElementById(steps[i+1]).classList.add('active');
+    }
+
+    const payload = {
+      name: document.getElementById('name').value || 'Student',
+      admission: document.getElementById('admission').value || '',
+      gpa: parseFloat(document.getElementById('gpa').value),
+      group_size: parseInt(document.getElementById('groupSize').value),
+      experience_months: parseInt(document.getElementById('experienceMonths').value),
+      skills: getSelectedSkills(),
+      skill_levels: { python: parseInt(document.getElementById('pythonLevel').value) },
+      career_goal: getSelectedCareer(),
+      weekly_hours: parseInt(document.getElementById('weeklyHours').value),
+      priorities: getSelectedPriorities(),
+    };
+
+    try {
+      const res = await fetch('/api/consult', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (data.success) {
+        sessionStorage.setItem('logicoreResult', JSON.stringify(data.result));
+        window.location.href = '/results';
+      } else {
+        alert('Analysis error: ' + data.error);
+        overlay.classList.remove('show');
+      }
+    } catch (e) {
+      alert('Connection error: ' + e.message);
+      overlay.classList.remove('show');
+    }
+  }
+
+  updateProgress(1);
+</script>
+{% endblock %}

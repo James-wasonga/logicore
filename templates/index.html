@@ -1,0 +1,642 @@
+{% extends "base.html" %}
+{% block title %}LogiCore — AI Project Advisory Expert System{% endblock %}
+
+{% block extra_styles %}
+<style>
+  /* ── HERO ── */
+  .hero {
+    min-height: calc(100vh - 70px);
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    padding: 6rem 3rem 4rem;
+  }
+
+  .hero-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+  }
+  .orb-1 {
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(79,195,247,0.12) 0%, transparent 70%);
+    top: -100px; right: -100px;
+    animation: float 8s ease-in-out infinite;
+  }
+  .orb-2 {
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(167,139,250,0.1) 0%, transparent 70%);
+    bottom: -50px; left: -80px;
+    animation: float 10s ease-in-out infinite reverse;
+  }
+
+/*
+  .hero-content {
+    max-width: 680px;
+    position: relative;
+    z-index: 2;
+  } 
+  */
+
+  .hero-content {
+    flex: 1;
+    padding-right: 2rem;
+  }
+
+
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(79,195,247,0.08);
+    border: 1px solid rgba(79,195,247,0.2);
+    border-radius: 100px;
+    padding: 0.4rem 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--accent-blue);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.8rem, 6vw, 4.5rem);
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+  }
+
+  .hero-title .highlight {
+    background: linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-violet) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-desc {
+    font-size: 1.15rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 2.5rem;
+    max-width: 560px;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 4rem;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 3rem;
+    flex-wrap: wrap;
+  }
+
+  .stat-item {}
+  .stat-number {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    color: var(--text-primary);
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+  .stat-number span {
+    background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .stat-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* ── HERO VISUAL ── */
+  /*
+  .hero-visual {
+    position: absolute;
+    right: 3rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    width: 420px;
+  }
+  */
+  .hero-visual {
+    flex: 1;
+    max-width: 420px;
+    position: relative;
+    transform: none;
+    width: 100%;
+  }
+
+  .system-diagram {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 1.5rem;
+    box-shadow: 0 0 60px rgba(79,195,247,0.08);
+  }
+
+  .diagram-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .diagram-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-red { background: #FF5F57; }
+  .dot-yellow { background: #FFBD2E; }
+  .dot-green { background: #28C840; }
+
+  .diagram-title {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-left: auto;
+  }
+
+  .flow-nodes {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .flow-node {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0.75rem 1rem;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    transition: all 0.3s;
+  }
+
+  .flow-node:hover {
+    border-color: var(--accent-blue);
+    background: rgba(79,195,247,0.05);
+    transform: translateX(4px);
+  }
+
+  .flow-node-icon {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .icon-blue { background: rgba(79,195,247,0.15); color: var(--accent-blue); }
+  .icon-violet { background: rgba(167,139,250,0.15); color: var(--accent-violet); }
+  .icon-emerald { background: rgba(52,211,153,0.15); color: var(--accent-emerald); }
+  .icon-amber { background: rgba(251,191,36,0.15); color: var(--accent-amber); }
+
+  .flow-node-info {}
+  .flow-node-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.15rem;
+  }
+  .flow-node-desc {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+  }
+
+  .flow-arrow {
+    text-align: center;
+    color: var(--accent-blue);
+    font-size: 0.75rem;
+    opacity: 0.5;
+    margin: -0.2rem 0;
+  }
+
+  /* ── FEATURES SECTION ── */
+  .features-section {
+    padding: 6rem 3rem;
+  }
+
+  .features-header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .feature-card {
+    background: var(--gradient-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .feature-card:hover {
+    border-color: var(--border-bright);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3), var(--glow-blue);
+  }
+
+  .feature-card:hover::before { opacity: 1; }
+
+  .feature-icon {
+    width: 52px; height: 52px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    margin-bottom: 1.25rem;
+  }
+
+  .feature-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.6rem;
+    font-family: var(--font-body);
+  }
+
+  .feature-desc {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  /* ── HOW IT WORKS ── */
+  .how-section {
+    padding: 6rem 3rem;
+    background: linear-gradient(180deg, transparent, rgba(79,195,247,0.02), transparent);
+  }
+
+  .steps-container {
+    max-width: 900px;
+    margin: 3rem auto 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    position: relative;
+  }
+
+  .step-card {
+    text-align: center;
+    padding: 2rem 1.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    position: relative;
+    transition: all 0.3s;
+  }
+
+  .step-card:hover {
+    border-color: var(--border-bright);
+    transform: translateY(-4px);
+  }
+
+  .step-number {
+    font-family: var(--font-display);
+    font-size: 3rem;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-violet));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 1rem;
+  }
+
+  .step-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .step-desc {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* ── CTA SECTION ── */
+  .cta-section {
+    padding: 6rem 3rem;
+    text-align: center;
+  }
+
+  .cta-box {
+    max-width: 700px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, rgba(79,195,247,0.08), rgba(167,139,250,0.08));
+    border: 1px solid var(--border-bright);
+    border-radius: 24px;
+    padding: 4rem 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-box::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(79,195,247,0.12), transparent 70%);
+    pointer-events: none;
+  }
+
+  .cta-title {
+    font-family: var(--font-display);
+    font-size: 2.8rem;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    position: relative;
+  }
+
+  .cta-desc {
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+    margin-bottom: 2rem;
+    position: relative;
+  }
+
+  /* ── Categories strip ── */
+  .categories-strip {
+    padding: 4rem 3rem;
+    overflow: hidden;
+  }
+
+  .categories-scroll {
+    display: flex;
+    gap: 1rem;
+    animation: scroll-x 30s linear infinite;
+  }
+
+  .cat-chip {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.6rem 1.2rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+
+  @keyframes scroll-x {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-orb orb-1"></div>
+  <div class="hero-orb orb-2"></div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow animate-fade-up">
+      <i class="fas fa-circle" style="font-size:7px; color: var(--accent-emerald);"></i>
+      Rule-Based Expert System · Maseno University
+    </div>
+
+    <h1 class="hero-title animate-fade-up delay-1">
+      Intelligent Project<br>
+      Advisory for <span class="highlight">Computer Science</span><br>
+      Students
+    </h1>
+
+    <p class="hero-desc animate-fade-up delay-2">
+      LogiCore uses expert system reasoning and forward chaining inference to match your skills, GPA, career goals, and time constraints with the perfect final-year project topic.
+    </p>
+
+    <div class="hero-actions animate-fade-up delay-3">
+      <a href="/consult" class="btn btn-primary">
+        <i class="fas fa-brain"></i> Start Consultation
+      </a>
+      <a href="/knowledge-base" class="btn btn-outline">
+        <i class="fas fa-database"></i> View Knowledge Base
+      </a>
+    </div>
+
+    <div class="hero-stats animate-fade-up delay-4">
+      <div class="stat-item">
+        <div class="stat-number"><span>20</span>+</div>
+        <div class="stat-label">Rules in Knowledge Base</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number"><span>14</span></div>
+        <div class="stat-label">Project Topics</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number"><span>10</span></div>
+        <div class="stat-label">CS Domains Covered</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SYSTEM DIAGRAM -->
+  <div class="hero-visual animate-fade-up delay-2">
+    <div class="system-diagram">
+      <div class="diagram-header">
+        <div class="diagram-dot dot-red"></div>
+        <div class="diagram-dot dot-yellow"></div>
+        <div class="diagram-dot dot-green"></div>
+        <div class="diagram-title">logicore.inference_engine</div>
+      </div>
+      <div class="flow-nodes">
+        <div class="flow-node">
+          <div class="flow-node-icon icon-blue"><i class="fas fa-user"></i></div>
+          <div class="flow-node-info">
+            <div class="flow-node-name">Student Profile</div>
+            <div class="flow-node-desc">Skills · GPA · Career · Time</div>
+          </div>
+        </div>
+        <div class="flow-arrow"><i class="fas fa-chevron-down"></i></div>
+        <div class="flow-node">
+          <div class="flow-node-icon icon-violet"><i class="fas fa-database"></i></div>
+          <div class="flow-node-info">
+            <div class="flow-node-name">Knowledge Base</div>
+            <div class="flow-node-desc">20+ IF-THEN Rules · Facts</div>
+          </div>
+        </div>
+        <div class="flow-arrow"><i class="fas fa-chevron-down"></i></div>
+        <div class="flow-node">
+          <div class="flow-node-icon icon-emerald"><i class="fas fa-cogs"></i></div>
+          <div class="flow-node-info">
+            <div class="flow-node-name">Inference Engine</div>
+            <div class="flow-node-desc">Forward Chaining · Fixpoint</div>
+          </div>
+        </div>
+        <div class="flow-arrow"><i class="fas fa-chevron-down"></i></div>
+        <div class="flow-node">
+          <div class="flow-node-icon icon-amber"><i class="fas fa-lightbulb"></i></div>
+          <div class="flow-node-info">
+            <div class="flow-node-name">Recommendations</div>
+            <div class="flow-node-desc">Ranked Projects + Explanations</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORIES STRIP -->
+<div class="categories-strip">
+  <div class="categories-scroll">
+    <div class="cat-chip">🤖 Artificial Intelligence</div>
+    <div class="cat-chip">🌐 Web Development</div>
+    <div class="cat-chip">📱 Mobile Apps</div>
+    <div class="cat-chip">⛓️ Blockchain</div>
+    <div class="cat-chip">📊 Data Science</div>
+    <div class="cat-chip">🔒 Cybersecurity</div>
+    <div class="cat-chip">📡 IoT Systems</div>
+    <div class="cat-chip">☁️ Cloud & DevOps</div>
+    <div class="cat-chip">🧠 Expert Systems</div>
+    <div class="cat-chip">🗄️ Database Engineering</div>
+    <!-- Duplicate for seamless loop -->
+    <div class="cat-chip">🤖 Artificial Intelligence</div>
+    <div class="cat-chip">🌐 Web Development</div>
+    <div class="cat-chip">📱 Mobile Apps</div>
+    <div class="cat-chip">⛓️ Blockchain</div>
+    <div class="cat-chip">📊 Data Science</div>
+    <div class="cat-chip">🔒 Cybersecurity</div>
+    <div class="cat-chip">📡 IoT Systems</div>
+    <div class="cat-chip">☁️ Cloud & DevOps</div>
+    <div class="cat-chip">🧠 Expert Systems</div>
+    <div class="cat-chip">🗄️ Database Engineering</div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="features-section">
+  <div class="features-header">
+    <div class="section-label">Expert System Architecture</div>
+    <h2 class="section-title">All Core Components Implemented</h2>
+    <div class="divider" style="margin: 1rem auto;"></div>
+    <p class="section-subtitle" style="margin: 0 auto; text-align:center;">LogiCore is a complete rule-based expert system with every standard component fully operational.</p>
+  </div>
+
+  <div class="features-grid">
+    <div class="feature-card animate-fade-up">
+      <div class="feature-icon icon-violet">
+        <i class="fas fa-database"></i>
+      </div>
+      <div class="feature-title">Knowledge Base</div>
+      <p class="feature-desc">Stores 20+ expert rules and domain facts encoding supervisor knowledge about project selection, skill requirements, and complexity levels.</p>
+    </div>
+    <div class="feature-card animate-fade-up delay-1">
+      <div class="feature-icon icon-blue">
+        <i class="fas fa-cogs"></i>
+      </div>
+      <div class="feature-title">Inference Engine</div>
+      <p class="feature-desc">Applies forward chaining to iteratively fire rules until a fixpoint is reached, deriving new facts from the student's profile inputs.</p>
+    </div>
+    <div class="feature-card animate-fade-up delay-2">
+      <div class="feature-icon icon-emerald">
+        <i class="fas fa-project-diagram"></i>
+      </div>
+      <div class="feature-title">Forward Chaining</div>
+      <p class="feature-desc">Data-driven reasoning that starts from known facts (GPA, skills, time) and fires applicable rules to build conclusions bottom-up.</p>
+    </div>
+    <div class="feature-card animate-fade-up delay-3">
+      <div class="feature-icon icon-amber">
+        <i class="fas fa-comments"></i>
+      </div>
+      <div class="feature-title">Explanation Facility</div>
+      <p class="feature-desc">Each recommendation is fully justified. The system shows every rule that fired, why it applied, and how it influenced the final result.</p>
+    </div>
+    <div class="feature-card animate-fade-up">
+      <div class="feature-icon" style="background:rgba(248,113,113,0.15); color:var(--accent-rose);">
+        <i class="fas fa-user-circle"></i>
+      </div>
+      <div class="feature-title">Student Interface</div>
+      <p class="feature-desc">A multi-step guided consultation form captures student skills, GPA, career goals, time availability, and priority preferences.</p>
+    </div>
+    <div class="feature-card animate-fade-up delay-1">
+      <div class="feature-icon" style="background:rgba(34,211,238,0.15); color:var(--accent-cyan);">
+        <i class="fas fa-chart-bar"></i>
+      </div>
+      <div class="feature-title">Scored Rankings</div>
+      <p class="feature-desc">Projects are scored across multiple dimensions — skills, career fit, complexity, risk, novelty — and presented in ranked order with match percentages.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section">
+  <div style="text-align:center;">
+    <div class="section-label">Process</div>
+    <h2 class="section-title">How LogiCore Works</h2>
+    <div class="divider" style="margin: 1rem auto;"></div>
+  </div>
+  <div class="steps-container">
+    <div class="step-card animate-fade-up">
+      <div class="step-number">01</div>
+      <div class="step-title">Input Your Profile</div>
+      <p class="step-desc">Enter your GPA, skills, career goals, time availability, and project priorities.</p>
+    </div>
+    <div class="step-card animate-fade-up delay-1">
+      <div class="step-number">02</div>
+      <div class="step-title">Rules are Evaluated</div>
+      <p class="step-desc">The inference engine evaluates all 20+ rules against your profile using forward chaining.</p>
+    </div>
+    <div class="step-card animate-fade-up delay-2">
+      <div class="step-number">03</div>
+      <div class="step-title">Projects are Scored</div>
+      <p class="step-desc">Each project topic is scored on multiple dimensions and ranked by overall compatibility.</p>
+    </div>
+    <div class="step-card animate-fade-up delay-3">
+      <div class="step-number">04</div>
+      <div class="step-title">Get Explained Results</div>
+      <p class="step-desc">Receive your top recommendations with full reasoning traces and actionable guidance.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-box animate-fade-up">
+    <h2 class="cta-title">Ready to Find Your<br>Perfect Project?</h2>
+    <p class="cta-desc">Answer a few guided questions and let LogiCore's expert reasoning recommend the best final-year project for your unique profile.</p>
+    <a href="/consult" class="btn btn-primary" style="font-size:1rem; padding: 0.9rem 2.5rem;">
+      <i class="fas fa-rocket"></i> Begin Consultation
+    </a>
+  </div>
+</section>
+{% endblock %}

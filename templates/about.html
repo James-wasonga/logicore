@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+{% block title %}About — LogiCore Expert System{% endblock %}
+
+{% block extra_styles %}
+<style>
+  .about-page { padding: 5rem 2rem 5rem; min-height: 100vh; }
+  .about-wrap { max-width: 1000px; margin: 0 auto; }
+
+  .arch-diagram {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2.5rem;
+    margin: 2rem 0;
+  }
+
+  .arch-flow {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .arch-node {
+    background: rgba(255,255,255,0.03);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    text-align: center;
+    min-width: 120px;
+    transition: all 0.3s;
+  }
+
+  .arch-node:hover {
+    border-color: var(--accent-blue);
+    background: rgba(79,195,247,0.05);
+    transform: translateY(-3px);
+  }
+
+  .arch-node-icon { font-size: 1.8rem; margin-bottom: 0.4rem; }
+  .arch-node-label { font-size: 0.8rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.15rem; }
+  .arch-node-sub { font-size: 0.68rem; color: var(--text-muted); font-family: var(--font-mono); }
+
+  .arch-arrow {
+    color: var(--accent-blue);
+    font-size: 1.2rem;
+    opacity: 0.6;
+  }
+
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.25rem;
+    margin-top: 2rem;
+  }
+
+  .team-card {
+    background: var(--gradient-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s;
+  }
+
+  .team-card:hover {
+    border-color: var(--border-bright);
+    transform: translateY(-4px);
+    box-shadow: var(--glow-blue);
+  }
+
+  .team-avatar {
+    width: 70px; height: 70px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-violet));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    margin: 0 auto 1rem;
+    color: white;
+  }
+
+  .team-name { font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem; }
+  .team-id { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+  .team-role { font-size: 0.82rem; color: var(--text-secondary); }
+
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  .tech-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.75rem;
+    text-align: center;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+  }
+
+  .tech-item-name { color: var(--text-primary); font-weight: 600; margin-top: 0.25rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="about-page">
+  <div class="about-wrap">
+
+    <div class="animate-fade-up" style="text-align:center; margin-bottom:3rem;">
+      <div class="section-label">CCS 430: Expert Systems · Maseno University</div>
+      <h1 class="section-title">About LogiCore</h1>
+      <div class="divider" style="margin: 1rem auto;"></div>
+      <p class="section-subtitle" style="text-align:center; margin: 0 auto; max-width:620px;">
+        LogiCore is a rule-based expert system designed to guide final year Computer Science students in selecting appropriate project topics using intelligent, explainable reasoning.
+      </p>
+    </div>
+
+    <!-- ARCHITECTURE -->
+    <div class="card animate-fade-up" style="margin-bottom:2rem;">
+      <div class="section-label">System Architecture</div>
+      <h2 style="font-family:var(--font-display); font-size:1.6rem; margin-bottom:1.5rem; color:var(--text-primary);">Expert System Components</h2>
+      <div class="arch-diagram">
+        <div class="arch-flow">
+          <div class="arch-node">
+            <div class="arch-node-icon">👨‍🎓</div>
+            <div class="arch-node-label">User Interface</div>
+            <div class="arch-node-sub">Student Input Form</div>
+          </div>
+          <div class="arch-arrow"><i class="fas fa-arrow-right"></i></div>
+          <div class="arch-node">
+            <div class="arch-node-icon">🗃️</div>
+            <div class="arch-node-label">Working Memory</div>
+            <div class="arch-node-sub">Fact Storage</div>
+          </div>
+          <div class="arch-arrow"><i class="fas fa-arrow-right"></i></div>
+          <div class="arch-node" style="border-color:var(--accent-blue);">
+            <div class="arch-node-icon">⚙️</div>
+            <div class="arch-node-label">Inference Engine</div>
+            <div class="arch-node-sub">Forward Chaining</div>
+          </div>
+          <div class="arch-arrow"><i class="fas fa-arrows-alt-v"></i></div>
+          <div class="arch-node">
+            <div class="arch-node-icon">📖</div>
+            <div class="arch-node-label">Knowledge Base</div>
+            <div class="arch-node-sub">Rules + Facts</div>
+          </div>
+        </div>
+        <div style="text-align:center; margin-top:2rem;">
+          <i class="fas fa-arrow-down" style="color:var(--accent-blue); font-size:1.2rem;"></i>
+        </div>
+        <div class="arch-flow" style="margin-top:1rem;">
+          <div class="arch-node">
+            <div class="arch-node-icon">💬</div>
+            <div class="arch-node-label">Explanation Module</div>
+            <div class="arch-node-sub">Rule Justification</div>
+          </div>
+          <div class="arch-arrow"><i class="fas fa-plus"></i></div>
+          <div class="arch-node">
+            <div class="arch-node-icon">🏆</div>
+            <div class="arch-node-label">Project Matcher</div>
+            <div class="arch-node-sub">Scoring + Ranking</div>
+          </div>
+          <div class="arch-arrow"><i class="fas fa-arrow-right"></i></div>
+          <div class="arch-node" style="border-color:var(--accent-emerald);">
+            <div class="arch-node-icon">📊</div>
+            <div class="arch-node-label">Results Dashboard</div>
+            <div class="arch-node-sub">Recommendations</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TECHNOLOGIES -->
+    <div class="card animate-fade-up delay-1" style="margin-bottom:2rem;">
+      <div class="section-label">Stack</div>
+      <h2 style="font-family:var(--font-display); font-size:1.6rem; margin-bottom:0.5rem; color:var(--text-primary);">Tools & Technologies</h2>
+      <div class="tech-grid">
+        <div class="tech-item"><div>🐍</div><div class="tech-item-name">Python 3.x</div>Backend Logic</div>
+        <div class="tech-item"><div>🌶️</div><div class="tech-item-name">Flask</div>Web Framework</div>
+        <div class="tech-item"><div>🧠</div><div class="tech-item-name">Rule Engine</div>Custom-built</div>
+        <div class="tech-item"><div>🎨</div><div class="tech-item-name">HTML/CSS/JS</div>Frontend UI</div>
+        <div class="tech-item"><div>🗄️</div><div class="tech-item-name">Python Dicts</div>Knowledge Store</div>
+        <div class="tech-item"><div>🔗</div><div class="tech-item-name">REST API</div>JSON Interface</div>
+      </div>
+    </div>
+
+    <!-- TEAM -->
+    <div class="animate-fade-up delay-2">
+      <div class="section-label">Developers</div>
+      <h2 style="font-family:var(--font-display); font-size:1.6rem; margin-bottom:0.5rem; color:var(--text-primary);">The Team</h2>
+      <div class="team-grid">
+        <div class="team-card">
+          <div class="team-avatar">J</div>
+          <div class="team-name">James Wasonga</div>
+          <div class="team-id">CCS/00057/022</div>
+          <div class="team-role">Inference Engine & Backend Architecture</div>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar">F</div>
+          <div class="team-name">Felix Awere</div>
+          <div class="team-id">CCS/03003/022</div>
+          <div class="team-role">Knowledge Base & Rule Engineering</div>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar">A</div>
+          <div class="team-name">Amina Michael</div>
+          <div class="team-id">CCS/00055/022</div>
+          <div class="team-role">UI/UX Design & Explanation Module</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
