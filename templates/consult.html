@@ -824,30 +824,24 @@
     }
     */
 
-    const BACKEND = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? ''
-    : 'https://logicore-api.onrender.com';
-
-  try {
-    const res = await fetch(`${BACKEND}/api/consult`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    const data = await res.json();
-    if (data.success) {
-      sessionStorage.setItem('logicoreResult', JSON.stringify(data.result));
-      window.location.href = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-        ? '/results'
-        : 'results.html';
-    } else {
-      alert('Analysis error: ' + data.error);
+    try {
+      const res = await fetch('/api/consult', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (data.success) {
+        sessionStorage.setItem('logicoreResult', JSON.stringify(data.result));
+        window.location.href = '/results';
+      } else {
+        alert('Analysis error: ' + data.error);
+        overlay.classList.remove('show');
+      }
+    } catch (e) {
+      alert('Connection error: ' + e.message);
       overlay.classList.remove('show');
     }
-  } catch (e) {
-    alert('Connection error: ' + e.message);
-    overlay.classList.remove('show');
-  }
   }
 
   updateProgress(1);
