@@ -1,5 +1,5 @@
 # 🧠 LogiCore Expert System
-### CCS 430: Expert Systems · Maseno University, School of Computing & Informatics
+###  Expert System · Maseno University, School of Computing & Informatics
 
 > A complete rule-based expert system for Final Year Project Advisory, built for undergraduate Computer Science students.
 
