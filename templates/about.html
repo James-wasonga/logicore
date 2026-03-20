@@ -4,7 +4,331 @@
 {% block extra_styles %}
 <style>
   .about-page { padding: 5rem 2rem 5rem; min-height: 100vh; }
-  .about-wrap { max-width: 1000px; margin: 0 auto; }
+  .about-wrap { max-width: 1050px; margin: 0 auto; }
+
+  /* ── SECTION TOGGLE TABS ── */
+  .view-toggle {
+    display: flex;
+    gap: 0;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 6px;
+    width: fit-content;
+    margin: 0 auto 3.5rem;
+  }
+
+  .toggle-btn {
+    padding: 0.65rem 1.75rem;
+    border-radius: 10px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .toggle-btn.active {
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-violet));
+    color: white;
+    box-shadow: 0 4px 15px rgba(79,195,247,0.25);
+  }
+
+  .toggle-btn:not(.active):hover {
+    color: var(--text-primary);
+    background: rgba(255,255,255,0.04);
+  }
+
+  /* ── SECTION PANELS ── */
+  .about-panel { display: none; }
+  .about-panel.active { display: block; }
+
+  /* ══════════════════════════════
+     NON-TECHNICAL SECTION
+  ══════════════════════════════ */
+
+  /* Hero intro card */
+  .simple-hero {
+    background: linear-gradient(135deg, rgba(79,195,247,0.08), rgba(167,139,250,0.08));
+    border: 1px solid var(--border-bright);
+    border-radius: 24px;
+    padding: 3rem;
+    margin-bottom: 2.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .simple-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(79,195,247,0.1), transparent 65%);
+    pointer-events: none;
+  }
+
+  .simple-hero-icon {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    display: block;
+    position: relative;
+  }
+
+  .simple-hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    position: relative;
+  }
+
+  .simple-hero-desc {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    max-width: 620px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  /* What is it section */
+  .what-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .what-card {
+    background: var(--gradient-card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 2rem;
+    transition: all 0.3s;
+  }
+
+  .what-card:hover {
+    border-color: var(--border-bright);
+    transform: translateY(-3px);
+    box-shadow: 0 16px 35px rgba(0,0,0,0.25);
+  }
+
+  .what-card-emoji {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .what-card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.6rem;
+  }
+
+  .what-card-body {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.75;
+  }
+
+  /* Problem & Solution */
+  .problem-solution {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .ps-card {
+    border-radius: 18px;
+    padding: 2rem;
+    border: 1px solid var(--border);
+  }
+
+  .ps-card.problem {
+    background: rgba(248,113,113,0.05);
+    border-color: rgba(248,113,113,0.2);
+  }
+
+  .ps-card.solution {
+    background: rgba(52,211,153,0.05);
+    border-color: rgba(52,211,153,0.2);
+  }
+
+  .ps-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ps-card.problem .ps-label { color: var(--accent-rose); }
+  .ps-card.solution .ps-label { color: var(--accent-emerald); }
+
+  .ps-title {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+  }
+
+  .ps-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .ps-list li {
+    display: flex;
+    gap: 10px;
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  .ps-list li span { flex-shrink: 0; }
+
+  /* How it helps steps */
+  .steps-simple {
+    margin-bottom: 2.5rem;
+  }
+
+  .steps-simple-title {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+
+  .simple-steps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .simple-step {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s;
+    position: relative;
+  }
+
+  .simple-step:hover {
+    border-color: var(--border-bright);
+    transform: translateY(-3px);
+  }
+
+  .simple-step-num {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-violet));
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-family: var(--font-mono);
+  }
+
+  .simple-step-icon { font-size: 1.8rem; margin-bottom: 0.6rem; }
+  .simple-step-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.4rem;
+  }
+  .simple-step-desc {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* Who benefits */
+  .who-section {
+    margin-bottom: 2.5rem;
+  }
+
+  .who-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .who-card {
+    background: var(--gradient-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    transition: all 0.3s;
+  }
+
+  .who-card:hover {
+    border-color: var(--border-bright);
+    transform: translateY(-3px);
+  }
+
+  .who-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+  .who-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.4rem;
+  }
+  .who-desc {
+    font-size: 0.83rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+  }
+
+  /* Quote / highlight box */
+  .highlight-quote {
+    background: linear-gradient(135deg, rgba(79,195,247,0.06), rgba(167,139,250,0.06));
+    border: 1px solid var(--border-bright);
+    border-left: 4px solid var(--accent-blue);
+    border-radius: 0 16px 16px 0;
+    padding: 1.5rem 2rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .highlight-quote p {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    color: var(--text-primary);
+    line-height: 1.7;
+    font-style: italic;
+  }
+
+  .highlight-quote cite {
+    display: block;
+    margin-top: 0.75rem;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-style: normal;
+  }
+
+  /* ══════════════════════════════
+     TECHNICAL SECTION (existing)
+  ══════════════════════════════ */
 
   .arch-diagram {
     background: var(--bg-card);
@@ -42,11 +366,7 @@
   .arch-node-label { font-size: 0.8rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.15rem; }
   .arch-node-sub { font-size: 0.68rem; color: var(--text-muted); font-family: var(--font-mono); }
 
-  .arch-arrow {
-    color: var(--accent-blue);
-    font-size: 1.2rem;
-    opacity: 0.6;
-  }
+  .arch-arrow { color: var(--accent-blue); font-size: 1.2rem; opacity: 0.6; }
 
   .team-grid {
     display: grid;
@@ -103,6 +423,12 @@
   }
 
   .tech-item-name { color: var(--text-primary); font-weight: 600; margin-top: 0.25rem; }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .what-grid, .problem-solution { grid-template-columns: 1fr; }
+    .simple-hero { padding: 2rem 1.5rem; }
+  }
 </style>
 {% endblock %}
 
@@ -110,110 +436,332 @@
 <div class="about-page">
   <div class="about-wrap">
 
-    <div class="animate-fade-up" style="text-align:center; margin-bottom:3rem;">
-      <div class="section-label">Expert System · Maseno University</div>
+    <!-- PAGE HEADER -->
+    <div class="animate-fade-up" style="text-align:center; margin-bottom:2.5rem;">
+      <div class="section-label"> Expert Systems · Maseno University</div>
       <h1 class="section-title">About LogiCore</h1>
       <div class="divider" style="margin: 1rem auto;"></div>
-      <p class="section-subtitle" style="text-align:center; margin: 0 auto; max-width:620px;">
-        LogiCore is a rule-based expert system designed to guide final year Computer Science students in selecting appropriate project topics using intelligent, explainable reasoning.
-      </p>
     </div>
 
-    <!-- ARCHITECTURE -->
-    <div class="card animate-fade-up" style="margin-bottom:2rem;">
-      <div class="section-label">System Architecture</div>
-      <h2 style="font-family:var(--font-display); font-size:1.6rem; margin-bottom:1.5rem; color:var(--text-primary);">Expert System Components</h2>
-      <div class="arch-diagram">
-        <div class="arch-flow">
-          <div class="arch-node">
-            <div class="arch-node-icon">👨‍🎓</div>
-            <div class="arch-node-label">User Interface</div>
-            <div class="arch-node-sub">Student Input Form</div>
-          </div>
-          <div class="arch-arrow"><i class="fas fa-arrow-right"></i></div>
-          <div class="arch-node">
-            <div class="arch-node-icon">🗃️</div>
-            <div class="arch-node-label">Working Memory</div>
-            <div class="arch-node-sub">Fact Storage</div>
-          </div>
-          <div class="arch-arrow"><i class="fas fa-arrow-right"></i></div>
-          <div class="arch-node" style="border-color:var(--accent-blue);">
-            <div class="arch-node-icon">⚙️</div>
-            <div class="arch-node-label">Inference Engine</div>
-            <div class="arch-node-sub">Forward Chaining</div>
-          </div>
-          <div class="arch-arrow"><i class="fas fa-arrows-alt-v"></i></div>
-          <div class="arch-node">
-            <div class="arch-node-icon">📖</div>
-            <div class="arch-node-label">Knowledge Base</div>
-            <div class="arch-node-sub">Rules + Facts</div>
-          </div>
+    <!-- TOGGLE BUTTONS -->
+    <div class="view-toggle animate-fade-up delay-1">
+      <button class="toggle-btn active" id="btn-simple" onclick="switchView('simple')">
+        <i class="fas fa-users"></i> For Everyone
+      </button>
+      <button class="toggle-btn" id="btn-technical" onclick="switchView('technical')">
+        <i class="fas fa-code"></i> Technical View
+      </button>
+    </div>
+
+    <!-- ════════════════════════════
+         NON-TECHNICAL PANEL
+    ════════════════════════════ -->
+    <div class="about-panel active" id="panel-simple">
+
+      <!-- HERO INTRO -->
+      <div class="simple-hero animate-fade-up">
+        <span class="simple-hero-icon">🧠</span>
+        <h2 class="simple-hero-title">Your Personal Academic Advisor,<br>Powered by Artificial Intelligence</h2>
+        <p class="simple-hero-desc">
+          LogiCore is a smart computer program that acts like an experienced university supervisor. It listens to your skills, goals, and situation — then recommends the best final year project for you, and explains exactly why.
+        </p>
+      </div>
+
+      <!-- WHAT IS IT -->
+      <div class="what-grid animate-fade-up">
+        <div class="what-card">
+          <span class="what-card-emoji">🎓</span>
+          <div class="what-card-title">What is LogiCore?</div>
+          <p class="what-card-body">
+            LogiCore is a Final Year Project Advisory System built for undergraduate Computer Science students at Maseno University. Think of it as a knowledgeable friend who has supervised hundreds of student projects and knows exactly which one is right for you.
+          </p>
         </div>
-        <div style="text-align:center; margin-top:2rem;">
-          <i class="fas fa-arrow-down" style="color:var(--accent-blue); font-size:1.2rem;"></i>
+        <div class="what-card">
+          <span class="what-card-emoji">🤔</span>
+          <div class="what-card-title">How Does It Think?</div>
+          <p class="what-card-body">
+            The system uses a type of Artificial Intelligence called an <strong style="color:var(--accent-blue);">Expert System</strong>. It stores knowledge from experienced supervisors in the form of rules, then applies those rules to your personal profile to arrive at a recommendation — just like a human expert would.
+          </p>
         </div>
-        <div class="arch-flow" style="margin-top:1rem;">
-          <div class="arch-node">
-            <div class="arch-node-icon">💬</div>
-            <div class="arch-node-label">Explanation Module</div>
-            <div class="arch-node-sub">Rule Justification</div>
+        <div class="what-card">
+          <span class="what-card-emoji">📋</span>
+          <div class="what-card-title">What Does It Consider?</div>
+          <p class="what-card-body">
+            LogiCore looks at your academic GPA, the programming skills you have, your career goals after graduation, how many hours per week you can dedicate to the project, and whether you are working solo or in a group.
+          </p>
+        </div>
+        <div class="what-card">
+          <span class="what-card-emoji">💡</span>
+          <div class="what-card-title">What Do You Get?</div>
+          <p class="what-card-body">
+            You receive a ranked list of up to 6 project topics tailored specifically to you, each with a compatibility score, the tools you would use, an explanation of why it was recommended, and honest warnings about any challenges you might face.
+          </p>
+        </div>
+      </div>
+
+      <!-- HIGHLIGHT QUOTE -->
+      <div class="highlight-quote animate-fade-up">
+        <p>"Many students choose final year projects based on trends or peer pressure rather than informed reasoning — leading to incomplete systems, poor outcomes, and wasted effort. LogiCore was built to fix that."</p>
+        <cite>— LogiCore Design Philosophy, Maseno University 2026</cite>
+      </div>
+
+      <!-- PROBLEM & SOLUTION -->
+      <div class="problem-solution animate-fade-up">
+        <div class="ps-card problem">
+          <div class="ps-label"><i class="fas fa-exclamation-circle"></i> The Problem</div>
+          <div class="ps-title">What students face today</div>
+          <ul class="ps-list">
+            <li><span>😟</span> Difficulty choosing a project that matches their skill level</li>
+            <li><span>⏰</span> Supervisors too busy to give personalized guidance to every student</li>
+            <li><span>❌</span> Students pick projects that are too complex or too simple</li>
+            <li><span>🎯</span> Projects do not align with future career goals</li>
+            <li><span>📉</span> High rates of incomplete or poorly executed projects</li>
+          </ul>
+        </div>
+        <div class="ps-card solution">
+          <div class="ps-label"><i class="fas fa-check-circle"></i> The Solution</div>
+          <div class="ps-title">What LogiCore provides</div>
+          <ul class="ps-list">
+            <li><span>✅</span> Instant, personalized project recommendations anytime</li>
+            <li><span>🧭</span> Guidance based on your actual skills and GPA — not guesswork</li>
+            <li><span>🎯</span> Projects matched to your specific career path</li>
+            <li><span>⚖️</span> Complexity matched to what you can realistically achieve</li>
+            <li><span>📖</span> Full explanation of every recommendation so you understand why</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- HOW IT HELPS -->
+      <div class="steps-simple animate-fade-up">
+        <h2 class="steps-simple-title">Using LogiCore in 4 Simple Steps</h2>
+        <div class="simple-steps-grid">
+          <div class="simple-step">
+            <div class="simple-step-num">1</div>
+            <div class="simple-step-icon">📝</div>
+            <div class="simple-step-title">Tell Us About Yourself</div>
+            <p class="simple-step-desc">Enter your name, GPA, the programming skills you know, and how much time you have per week.</p>
           </div>
-          <div class="arch-arrow"><i class="fas fa-plus"></i></div>
-          <div class="arch-node">
-            <div class="arch-node-icon">🏆</div>
-            <div class="arch-node-label">Project Matcher</div>
-            <div class="arch-node-sub">Scoring + Ranking</div>
+          <div class="simple-step">
+            <div class="simple-step-num">2</div>
+            <div class="simple-step-icon">🎯</div>
+            <div class="simple-step-title">Choose Your Career Goal</div>
+            <p class="simple-step-desc">Pick the job role you want after graduation — web developer, data scientist, security analyst, and more.</p>
           </div>
-          <div class="arch-arrow"><i class="fas fa-arrow-right"></i></div>
-          <div class="arch-node" style="border-color:var(--accent-emerald);">
-            <div class="arch-node-icon">📊</div>
-            <div class="arch-node-label">Results Dashboard</div>
-            <div class="arch-node-sub">Recommendations</div>
+          <div class="simple-step">
+            <div class="simple-step-num">3</div>
+            <div class="simple-step-icon">⚙️</div>
+            <div class="simple-step-title">The System Analyses You</div>
+            <p class="simple-step-desc">LogiCore applies over 20 expert rules to your profile and calculates which projects suit you best.</p>
+          </div>
+          <div class="simple-step">
+            <div class="simple-step-num">4</div>
+            <div class="simple-step-icon">🏆</div>
+            <div class="simple-step-title">Get Your Recommendations</div>
+            <p class="simple-step-desc">Receive your top 6 project topics ranked by compatibility, complete with explanations and guidance.</p>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- TECHNOLOGIES -->
-    <div class="card animate-fade-up delay-1" style="margin-bottom:2rem;">
-      <div class="section-label">Stack</div>
-      <h2 style="font-family:var(--font-display); font-size:1.6rem; margin-bottom:0.5rem; color:var(--text-primary);">Tools & Technologies</h2>
-      <div class="tech-grid">
-        <div class="tech-item"><div>🐍</div><div class="tech-item-name">Python 3.x</div>Backend Logic</div>
-        <div class="tech-item"><div>🌶️</div><div class="tech-item-name">Flask</div>Web Framework</div>
-        <div class="tech-item"><div>🧠</div><div class="tech-item-name">Rule Engine</div>Custom-built</div>
-        <div class="tech-item"><div>🎨</div><div class="tech-item-name">HTML/CSS/JS</div>Frontend UI</div>
-        <div class="tech-item"><div>🗄️</div><div class="tech-item-name">Python Dicts</div>Knowledge Store</div>
-        <div class="tech-item"><div>🔗</div><div class="tech-item-name">REST API</div>JSON Interface</div>
-      </div>
-    </div>
-
-    <!-- TEAM -->
-    <div class="animate-fade-up delay-2">
-      <div class="section-label">Developers</div>
-      <h2 style="font-family:var(--font-display); font-size:1.6rem; margin-bottom:0.5rem; color:var(--text-primary);">The Team</h2>
-      <div class="team-grid">
-        <div class="team-card">
-          <div class="team-avatar">J</div>
-          <div class="team-name">James Wasonga</div>
-          <div class="team-id">CCS/00057/022</div>
-          <div class="team-role">Inference Engine & Backend Architecture</div>
-        </div>
-        <div class="team-card">
-          <div class="team-avatar">F</div>
-          <div class="team-name">Felix Awere</div>
-          <div class="team-id">CCS/03003/022</div>
-          <div class="team-role">Knowledge Base & Rule Engineering</div>
-        </div>
-        <div class="team-card">
-          <div class="team-avatar">A</div>
-          <div class="team-name">Amina Michael</div>
-          <div class="team-id">CCS/00055/022</div>
-          <div class="team-role">UI/UX Design & Explanation Module</div>
+      <!-- WHO BENEFITS -->
+      <div class="who-section animate-fade-up">
+        <h2 style="font-family:var(--font-display); font-size:1.6rem; color:var(--text-primary); margin-bottom:0.5rem; text-align:center;">Who Benefits from LogiCore?</h2>
+        <p style="text-align:center; color:var(--text-secondary); font-size:0.9rem; margin-bottom:0.5rem;">The system was designed to serve multiple people in the academic community.</p>
+        <div class="who-grid">
+          <div class="who-card">
+            <div class="who-icon">👨‍🎓</div>
+            <div class="who-title">Students</div>
+            <p class="who-desc">Get honest, intelligent guidance on which project to choose without having to guess. Make an informed, confident decision backed by expert reasoning.</p>
+          </div>
+          <div class="who-card">
+            <div class="who-icon">👩‍🏫</div>
+            <div class="who-title">Lecturers & Supervisors</div>
+            <p class="who-desc">Reduce the time spent on basic project selection consultations. Students arrive better prepared and with more realistic project ideas.</p>
+          </div>
+          <div class="who-card">
+            <div class="who-icon">🏛️</div>
+            <div class="who-title">Universities</div>
+            <p class="who-desc">Improve overall project quality and completion rates. Better student outcomes enhance the institution's academic reputation.</p>
+          </div>
+          <div class="who-card">
+            <div class="who-icon">🔬</div>
+            <div class="who-title">Researchers</div>
+            <p class="who-desc">A real-world case study of applying AI Expert Systems to education — demonstrating the practical value of knowledge-based systems.</p>
+          </div>
         </div>
       </div>
+
+      <!-- TEAM -->
+      <div class="animate-fade-up">
+        <div class="section-label">The Builders</div>
+        <h2 style="font-family:var(--font-display); font-size:1.6rem; margin-bottom:0.5rem; color:var(--text-primary);">Meet the Team</h2>
+        <p style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:0.5rem;">Three Computer Science students at Maseno University who built LogiCore as their CCS 430 Expert Systems project.</p>
+        <div class="team-grid">
+          <div class="team-card">
+            <div class="team-avatar">J</div>
+            <div class="team-name">James Wasonga</div>
+            <div class="team-id">CCS/00057/022</div>
+            <div class="team-role">Inference Engine & Backend Architecture</div>
+          </div>
+          <div class="team-card">
+            <div class="team-avatar">F</div>
+            <div class="team-name">Felix Awere</div>
+            <div class="team-id">CCS/03003/022</div>
+            <div class="team-role">Knowledge Base & Rule Engineering</div>
+          </div>
+          <div class="team-card">
+            <div class="team-avatar">A</div>
+            <div class="team-name">Amina Michael</div>
+            <div class="team-id">CCS/00055/022</div>
+            <div class="team-role">UI/UX Design, Frontend & Explanation Module</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ════════════════════════════
+         TECHNICAL PANEL
+    ════════════════════════════ -->
+    <div class="about-panel" id="panel-technical">
+
+      <!-- ARCHITECTURE -->
+      <div class="card animate-fade-up" style="margin-bottom:2rem;">
+        <div class="section-label">System Architecture</div>
+        <h2 style="font-family:var(--font-display); font-size:1.6rem; margin-bottom:1.5rem; color:var(--text-primary);">Expert System Components</h2>
+        <div class="arch-diagram">
+          <div class="arch-flow">
+            <div class="arch-node">
+              <div class="arch-node-icon">👨‍🎓</div>
+              <div class="arch-node-label">User Interface</div>
+              <div class="arch-node-sub">Student Input Form</div>
+            </div>
+            <div class="arch-arrow"><i class="fas fa-arrow-right"></i></div>
+            <div class="arch-node">
+              <div class="arch-node-icon">🗃️</div>
+              <div class="arch-node-label">Working Memory</div>
+              <div class="arch-node-sub">Fact Storage</div>
+            </div>
+            <div class="arch-arrow"><i class="fas fa-arrow-right"></i></div>
+            <div class="arch-node" style="border-color:var(--accent-blue);">
+              <div class="arch-node-icon">⚙️</div>
+              <div class="arch-node-label">Inference Engine</div>
+              <div class="arch-node-sub">Forward Chaining</div>
+            </div>
+            <div class="arch-arrow"><i class="fas fa-arrows-alt-v"></i></div>
+            <div class="arch-node">
+              <div class="arch-node-icon">📖</div>
+              <div class="arch-node-label">Knowledge Base</div>
+              <div class="arch-node-sub">Rules + Facts</div>
+            </div>
+          </div>
+          <div style="text-align:center; margin-top:2rem;">
+            <i class="fas fa-arrow-down" style="color:var(--accent-blue); font-size:1.2rem;"></i>
+          </div>
+          <div class="arch-flow" style="margin-top:1rem;">
+            <div class="arch-node">
+              <div class="arch-node-icon">💬</div>
+              <div class="arch-node-label">Explanation Module</div>
+              <div class="arch-node-sub">Rule Justification</div>
+            </div>
+            <div class="arch-arrow"><i class="fas fa-plus"></i></div>
+            <div class="arch-node">
+              <div class="arch-node-icon">🏆</div>
+              <div class="arch-node-label">Project Matcher</div>
+              <div class="arch-node-sub">Scoring + Ranking</div>
+            </div>
+            <div class="arch-arrow"><i class="fas fa-arrow-right"></i></div>
+            <div class="arch-node" style="border-color:var(--accent-emerald);">
+              <div class="arch-node-icon">📊</div>
+              <div class="arch-node-label">Results Dashboard</div>
+              <div class="arch-node-sub">Recommendations</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COMPONENT DETAILS -->
+      <div class="card animate-fade-up delay-1" style="margin-bottom:2rem;">
+        <div class="section-label">Component Breakdown</div>
+        <h2 style="font-family:var(--font-display); font-size:1.6rem; margin-bottom:1.5rem; color:var(--text-primary);">How Each Part Works</h2>
+        <div style="display:flex; flex-direction:column; gap:1rem;">
+          {% set components = [
+            ('🗄️', 'Knowledge Base', 'badge-violet', 'knowledge/knowledge_base.py', 'Stores 20+ IF-THEN rules, 14 project topic templates across 10 CS domains, domain facts including skill levels, career paths, and complexity mappings. Encoded as Python dictionaries for fast lookup.'),
+            ('⚙️', 'Inference Engine', 'badge-blue', 'engine/inference_engine.py → InferenceEngine', 'Implements forward chaining with fixpoint iteration. On each cycle it evaluates all unfired rules against the current WorkingMemory. If a rule\'s conditions are satisfied, it fires and asserts conclusions. Repeats until no new rules can fire.'),
+            ('🗃️', 'Working Memory', 'badge-cyan', 'engine/inference_engine.py → WorkingMemory', 'Holds the current session\'s facts — both the student\'s input data and all derived conclusions from fired rules. Acts as the shared state between the inference engine and the project matcher.'),
+            ('🎯', 'Project Matcher', 'badge-emerald', 'engine/inference_engine.py → ProjectMatcher', 'Scores every project topic against the inference results. Evaluates complexity eligibility, duration fit, category boosts, skill overlap ratio, career alignment, risk tolerance, and novelty preference. Returns top-N ranked results.'),
+            ('💬', 'Explanation Facility', 'badge-amber', 'templates/results.html → Explanation Module tab', 'Every fired rule generates a human-readable explanation. The results page organises these by rule type (eligibility, time, skill_match, career, risk) so users understand exactly why each recommendation was made.')
+          ] %}
+          {% for icon, name, badge, path, desc in components %}
+          <div style="display:flex; gap:16px; padding:1.25rem; background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:12px;">
+            <div style="font-size:1.8rem; flex-shrink:0; width:44px; text-align:center;">{{ icon }}</div>
+            <div>
+              <div style="display:flex; align-items:center; gap:10px; margin-bottom:0.4rem; flex-wrap:wrap;">
+                <span style="font-weight:700; color:var(--text-primary); font-size:0.95rem;">{{ name }}</span>
+                <span class="badge {{ badge }}" style="font-size:0.68rem;">{{ path }}</span>
+              </div>
+              <p style="font-size:0.83rem; color:var(--text-secondary); line-height:1.65;">{{ desc }}</p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- TECHNOLOGIES -->
+      <div class="card animate-fade-up delay-2" style="margin-bottom:2rem;">
+        <div class="section-label">Stack</div>
+        <h2 style="font-family:var(--font-display); font-size:1.6rem; margin-bottom:0.5rem; color:var(--text-primary);">Tools & Technologies</h2>
+        <div class="tech-grid">
+          <div class="tech-item"><div>🐍</div><div class="tech-item-name">Python 3.x</div>Backend Logic</div>
+          <div class="tech-item"><div>🌶️</div><div class="tech-item-name">Flask</div>Web Framework</div>
+          <div class="tech-item"><div>🧠</div><div class="tech-item-name">Rule Engine</div>Custom-built</div>
+          <div class="tech-item"><div>🎨</div><div class="tech-item-name">HTML/CSS/JS</div>Frontend UI</div>
+          <div class="tech-item"><div>🗄️</div><div class="tech-item-name">Python Dicts</div>Knowledge Store</div>
+          <div class="tech-item"><div>🔗</div><div class="tech-item-name">REST API</div>JSON Interface</div>
+          <div class="tech-item"><div>🚀</div><div class="tech-item-name">Gunicorn</div>WSGI Server</div>
+          <div class="tech-item"><div>☁️</div><div class="tech-item-name">Render</div>Cloud Hosting</div>
+        </div>
+      </div>
+
+      <!-- TEAM -->
+      <div class="animate-fade-up delay-3">
+        <div class="section-label">Developers</div>
+        <h2 style="font-family:var(--font-display); font-size:1.6rem; margin-bottom:0.5rem; color:var(--text-primary);">The Team</h2>
+        <div class="team-grid">
+          <div class="team-card">
+            <div class="team-avatar">J</div>
+            <div class="team-name">James Wasonga</div>
+            <div class="team-id">CCS/00057/022</div>
+            <div class="team-role">Inference Engine & Backend Architecture</div>
+          </div>
+          <div class="team-card">
+            <div class="team-avatar">F</div>
+            <div class="team-name">Felix Awere</div>
+            <div class="team-id">CCS/03003/022</div>
+            <div class="team-role">Knowledge Base & Rule Engineering</div>
+          </div>
+          <div class="team-card">
+            <div class="team-avatar">A</div>
+            <div class="team-name">Amina Michael</div>
+            <div class="team-id">CCS/00055/022</div>
+            <div class="team-role">UI/UX Design, Frontend & Explanation Module</div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
   </div>
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function switchView(view) {
+    document.querySelectorAll('.about-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-' + view).classList.add('active');
+    document.getElementById('btn-' + view).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
 {% endblock %}
