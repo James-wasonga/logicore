@@ -347,6 +347,162 @@
       .navbar { padding: 0 1.5rem; }
       .nav-links { display: none; }
     }
+
+    @media (max-width: 768px) {
+      
+      .navbar {
+        padding: 0 1.25rem;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .hero {
+        flex-direction: column;
+        padding: 5rem 1.5rem 3rem;
+        text-align: center;
+        gap: 2.5rem;
+      }
+
+      .hero-content {
+        max-width: 100%;
+        padding-right: 0;
+      }
+
+      .hero-title {
+        font-size: 2.2rem;
+      }
+
+      .hero-desc {
+        font-size: 0.95rem;
+        max-width: 100%;
+      }
+
+      .hero-actions {
+        justify-content: center;
+      } 
+
+      .hero-stats {
+        justify-content: center;
+        gap: 1.5rem;
+      }
+
+      .hero-visual {
+        width: 100%;
+        max-width: 100%%;
+      }
+
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .steps-container {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .cta-box {
+        padding: 2.5rem 1.5rem;
+      }
+
+      .cta-title {
+        font-size: 2rem;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .skill-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .career-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .priority-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .step-box {
+        padding: 1.5rem;
+      }
+
+      /* Results */
+      .rec-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .results-summary {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.5rem;
+      }
+
+      .summary-stats {
+        justify-content: center;
+      }
+
+      .tabs {
+        gap: 0;
+      }
+
+      .tab-btn {
+        padding: 0.65rem 0.9rem;
+        font-size: 0.8rem;
+      }
+
+      /* About page */
+      .what-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .problem-solution {
+        grid-template-columns: 1fr;
+      }
+
+      .simple-steps-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .who-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .arch-flow {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .arch-arrow {
+        transform: rotate(90deg);
+      }
+
+      .team-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tech-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      /* General */
+      .container {
+        padding: 0 1.25rem;
+      }
+
+      .section-title {
+        font-size: 1.8rem;
+      }
+
+      footer {
+        padding: 2rem 1.25rem;
+        font-size: 0.8rem;
+      }
+    }
+
+    
   </style>
 
   {% block extra_styles %}{% endblock %}
