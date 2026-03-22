@@ -344,11 +344,6 @@
 
     /* Responsive */
     @media (max-width: 768px) {
-      .navbar { padding: 0 1.5rem; }
-      .nav-links { display: none; }
-    }
-
-    @media (max-width: 768px) {
       
       .navbar {
         padding: 0 1.25rem;
@@ -393,7 +388,7 @@
         max-width: 100%%;
       }
 
-      .feature-grid {
+      .features-grid {
         grid-template-columns: 1fr;
       }
 
@@ -501,7 +496,47 @@
         font-size: 0.8rem;
       }
     }
+    
+    @media (max-width: 400px) {
 
+      .hero-title {
+        font-size: 1.8rem;
+      }
+
+      .skill-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .priority-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .simple-steps-grid {
+        grid-template-columns: 1fr;
+      } 
+
+      .steps-container {
+        grid-template-columns: 1fr;
+      }
+
+      .tech-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tab-btn {
+        padding: 0.5rem 0.6rem;
+        font-size: 0.72rem;
+      }
+
+      .btn {
+        padding: 0.65rem 1.25rem;
+        font-size: 0.85rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .mobile-menu-btn { display: block !important; }
+    }
     
   </style>
 
@@ -522,6 +557,41 @@
       <li><a href="/about" class="{% if request.endpoint == 'about' %}active{% endif %}">About</a></li>
       <li><a href="/consult" class="nav-cta">Start Consultation</a></li>
     </ul>
+
+          <!-- Mobile menu button -->
+      <button class="mobile-menu-btn" onclick="toggleMobileMenu()" style="
+      display: none;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.5rem 0.75rem;
+      color: var(--text-primary);
+      cursor: pointer;
+      font-size: 1rem;
+      ">
+      <i class="fas fa-bars"></i>
+      </button>
+
+      <!-- Mobile dropdown menu -->
+      <div id="mobileMenu" style="
+      display: none;
+      position: fixed;
+      top: 70px; left: 0; right: 0;
+      background: rgba(5,10,20,0.98);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 1.5rem;
+      z-index: 999;
+      flex-direction: column;
+      gap: 0.5rem;
+      ">
+      <a href="/" style="color:var(--text-secondary); text-decoration:none; padding:0.75rem 0; border-bottom:1px solid var(--border); font-size:0.95rem;">🏠 Home</a>
+      <a href="/consult" style="color:var(--text-secondary); text-decoration:none; padding:0.75rem 0; border-bottom:1px solid var(--border); font-size:0.95rem;">🧠 Consult</a>
+      <a href="/knowledge-base" style="color:var(--text-secondary); text-decoration:none; padding:0.75rem 0; border-bottom:1px solid var(--border); font-size:0.95rem;">📖 Knowledge Base</a>
+      <a href="/about" style="color:var(--text-secondary); text-decoration:none; padding:0.75rem 0; border-bottom:1px solid var(--border); font-size:0.95rem;">ℹ️ About</a>
+      <a href="/consult" class="btn btn-primary" style="margin-top:0.5rem; justify-content:center;">Start Consultation</a>
+      </div>
+
   </nav>
 
   <main>
@@ -534,5 +604,20 @@
   </footer>
 
   {% block extra_scripts %}{% endblock %}
+  <script>
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobileMenu');
+      const isOpen = menu.style.display === 'flex';
+      menu.style.display = isOpen ? 'none' : 'flex';
+    }
+
+    document.querySelectorAll('#mobileMenu a').forEach(link => {
+      link.addEventListener('click', () => {
+        document.getElementById('mobileMenu').style.display = 'none';
+      });
+    });
+
+  </script>
+  
 </body>
 </html>
