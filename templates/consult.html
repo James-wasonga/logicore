@@ -730,7 +730,76 @@
     }
   }
 
+  function validateStep(step) {
+    if (step === 1) {
+      const name = document.getElementById('name').value.trim();
+      const admission = document.getElementById('admission').value.trim();
+      if (!name) {
+        showError('Please enter your full name.'); return false;
+      }
+      if (!admission) {
+        showError('Please enter your admission number.'); return false;
+      }
+      return true;
+    }
+    if (step === 2) {
+      const skills = getSelectedSkills();
+      if (skills.length === 0) {
+        showError('Please select at least one technical skill.'); return false;
+      }
+      return true;
+    }
+    if (step === 3) {
+      const career = getSelectedCareer();
+      if (!career) {
+        showError('Please select a career goal.'); return false;
+      }
+      return true;
+    }
+    if (step === 4) {
+      return true; // sliders always have values
+    }
+    return true;
+  }
+
+  function showError(message) {
+    // Remove any existing error
+    const existing = document.getElementById('stepError');
+    if (existing) existing.remove();
+
+    const err = document.createElement('div');
+    err.id = 'stepError';
+    err.style.cssText = `
+      background: rgba(248,113,113,0.1);
+      border: 1px solid rgba(248,113,113,0.4);
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      color: #F87171;
+      font-size: 0.85rem;
+      font-family: var(--font-mono);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      animation: fadeUp 0.3s ease both;
+    `;
+    err.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+
+    const activeStep = document.querySelector('.form-step.active');
+    const formNav = activeStep.querySelector('.form-nav');
+    activeStep.insertBefore(err, formNav);
+
+    // Auto remove after 4 seconds
+    setTimeout(() => { if (err.parentNode) err.remove(); }, 4000);
+  }
+
   function nextStep(from) {
+    // Remove any existing error first
+    const existing = document.getElementById('stepError');
+    if (existing) existing.remove();
+
+    if (!validateStep(from)) return;
+
     document.getElementById('step-' + from).classList.remove('active');
     currentStep = from + 1;
     document.getElementById('step-' + currentStep).classList.add('active');
@@ -780,6 +849,12 @@
   }
 
   async function submitConsultation() {
+    const priorities = getSelectedPriorities();
+    if (priorities.length === 0) {
+      showError('Please select at least one project priority.');
+      return;
+    }
+
     const overlay = document.getElementById('loadingOverlay');
     overlay.classList.add('show');
 
